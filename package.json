@@ -6,6 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "shares-cli": "./command/index.js",
+    "share": "bin/share",
+    "share-init": "bin/share-init"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/liutaochange/shares-cli.git"

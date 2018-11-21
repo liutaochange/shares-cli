@@ -1,0 +1,171 @@
+#!/usr/bin/env node
+
+const download = require('../src/core/download');
+const program = require('commander');
+const exists = require('fs').existsSync;
+const path = require('path');
+const ora = require('ora');
+const home = require('user-home');
+const tildify = require('tildify');
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+const rm = require('rimraf').sync;
+const logger = require('../src/helper/logger');
+const generate = require('../src/core/generate');
+const checkVersion = require('../src/check/check-version');
+const localPath = require('../src/helper/local-path');
+const repositories = require('../src/config/repositories');
+
+const isLocalPath = localPath.isLocalPath;
+const getTemplatePath = localPath.getTemplatePath;
+
+/**
+ * Usage.
+ */
+program
+  .usage('<template-name> [project-name]')
+  .option('-c, --clone <n>', 'use git clone')
+  .option('-o, --origin <n>', 'set git remote origin')
+  .option('--offline <n>', 'use cached src')
+  .option('-t --type <n>', 'template type: vue react library react-component vue-component');
+
+/**
+ * Help.
+ */
+
+program.on('--help', () => {
+  logger.log('  Examples:');
+  logger.log();
+  logger.log(chalk.gray('    # create a new project with an official template'));
+  logger.log('    $ sakitam init webpack my-project');
+  logger.log();
+  logger.log(chalk.gray('    # create a new project straight from a github template'));
+  logger.log('    $ sakitam init username/repo my-project');
+  logger.log();
+  logger.log(chalk.gray('    # create a new project straight from a git res'));
+  logger.log('    $ sakitam init my-project -o git@github.com:xx/xxxx.git');
+  logger.log();
+});
+
+/**
+ * Help.
+ */
+function help () {
+  program.parse(process.argv);
+  if (program.args.length < 1) return program.help();
+}
+help();
+
+/**
+ * Settings.
+ */
+const clone = !!program.clone || false;
+const offline = !!program.offline || false;
+let rawName = (clone || offline) ? program.args[0] : program.args[1];
+let template = (clone || offline) ? (clone ? program.clone : program.offline) : program.args[0];
+template = template || program.args[0];
+const hasSlash = template.indexOf('/') > -1;
+const inPlace = !rawName || rawName === '.';
+const name = inPlace ? path.relative('../', process.cwd()) : rawName;
+const to = path.resolve(rawName || '.');
+const _links = template.split('/');
+// eslint-disable-next-line
+const tmp = path.join(home, '.sakitam-templates', _links[_links.length - 1].replace(/^\.|(\.git)$/, ''));
+if (program.offline) {
+  console.log(`> Use cached template at ${chalk.yellow(tildify(tmp))}`);
+  template = tmp
+}
+
+/**
+ * Padding.
+ */
+
+console.log();
+process.on('exit', () => {
+  console.log()
+});
+
+if (inPlace || exists(to)) {
+  inquirer.prompt([{
+    type: 'confirm',
+    message: inPlace
+      ? 'Generate project in current directory?'
+      : 'Target directory exists. Continue?',
+    name: 'ok'
+  }]).then(answers => {
+    if (answers.ok) {
+      run();
+    }
+  }).catch(logger.fatal);
+} else {
+  run();
+}
+
+/**
+ * Check, download and generate the project.
+ */
+function run () {
+  // check if template is local
+  if (isLocalPath(template)) {
+    const templatePath = getTemplatePath(template);
+    if (exists(templatePath)) {
+      generate(name, templatePath, to, err => {
+        if (err) logger.fatal(err);
+        logger.success('Generated "%s".', name);
+      })
+    } else {
+      logger.fatal('Local template "%s" not found.', template);
+    }
+  } else {
+    checkVersion(() => {
+      if (!hasSlash && !clone) {
+        // use official templates
+        const _type = program.type || 'vue';
+        const officialTemplate = `${repositories[_type]['repo']}/${template}`;
+        if (template.indexOf('#') !== -1) {
+          downloadAndGenerate(officialTemplate);
+        } else {
+          downloadAndGenerate(officialTemplate);
+        }
+      } else { // 有斜线分开说明给定的为 username/repo
+        downloadAndGenerate(template);
+      }
+    })
+  }
+}
+
+/**
+ * Download a generate from a template repo.
+ * @param {String} template
+ */
+function downloadAndGenerate (template) {
+  const spinner = ora({
+    text: 'downloading template',
+    spinner: {
+      "interval": 80,
+      "frames": [
+        "⣾",
+        "⣽",
+        "⣻",
+        "⢿",
+        "⡿",
+        "⣟",
+        "⣯",
+        "⣷"
+      ]
+    }
+  });
+  spinner.start();
+  // Remove if local template exists
+  if (exists(tmp)) rm(tmp);
+  download(template, tmp, {
+    clone: clone
+  }, function (err) {
+    spinner.stop();
+    if (err) logger.fatal('Failed to download repo ' + template + ': ' + err.message.trim());
+    generate(name, tmp, to, err => {
+      if (err) logger.fatal(err);
+      logger.success('Generated "%s".', name)
+    })
+  })
+}
