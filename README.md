@@ -44,8 +44,103 @@
 | `metalsmith` | `An extremely simple, pluggable static site generator.` | https://github.com/segmentio/metalsmith |
 | `multimatch` | `对 minimatch 的多字符串处理的扩展` | https://github.com/sindresorhus/multimatch |
 | `consolidate` | `支持多种模板引擎的渲染` | https://github.com/tj/consolidate.js |
-| `consolidate` | `支持多种模板引擎的渲染` | https://github.com/tj/consolidate.js |
 | `async` | `用于异步代码的高阶函数和通用模型` | https://github.com/caolan/async |
 | `validate-npm-package-name` | `用于验证npm包` | https://github.com/npm/validate-npm-package-name |
 | `figlet` | `A FIG Driver written in JavaScript which aims to fully implement the FIGfont spec.` | https://github.com/patorjk/figlet.js |
+
+
+### Quickstart
+
+```bash
+npm install -g sakitam-cli
+# or
+yarn global add sakitam-cli
+
+// list available templete
+sakitam list
+// output usage information
+sakitam list -h
+// params: Template view under the specified warehouse
+sakitam list -u aurorafe -p vue
+// output usage information
+sakitam init -h
+// generate project
+sakitam init sakitam-gis/maptalks-plugin-tpl-base project
+// Defaults associated repository `aurorafe`, so, you can use
+sakitam init vue-template-webpack project
+// Use cached template
+sakitam init --offline vue-template-webpack project
+cd project
+npm i
+npm run dev
+```
+
+### example
+
+```bash
+sakitam list vue // list vue project templete
+sakitam list react // list react project templete
+sakitam list library // list javascript library templete
+sakitam list react-component // list react component templete
+sakitam list vue-component // list vue component templete
+
+// init
+sakitam init vue-template-webpack project // repo
+sakitam init aurorafe/vue-template-webpack project // user/repo
+sakitam init --offline vue-template-webpack project // Use cached template
+sakitam init -c direct:https://github.com/aurorafe/vue-template-webpack.git project // Use git clone ~ direct is important
+```
+
+## Resource
+
+### vue & vue-component
+
+```bash
+
+// list
+sakitam list vue // or
+sakitam list -u vuejs-templates // list vue project templete
+sakitam list vue-component // list vue component templete
+
+// init
+sakitam init vue-template-webpack project // repo
+sakitam init aurorafe/vue-template-webpack project // user/repo
+// or
+sakitam init vuejs-templates/webpack project // or other template
+
+// components template
+sakitam init vue-component-template-webpack project // build your own component
+```
+
+### react & react-component
+
+```bash
+sakitam list react // list react project template
+sakitam list react-component // list react component templete
+
+// init
+sakitam init react-template-webpack project // repo
+sakitam init aurorafe/react-template-webpack project // user/repo or other template
+
+// components template
+sakitam init react-component-template-ts project // build your own component
+```
+
+### library (javascript library)
+
+```bash
+sakitam list library // list library template
+
+// init build your own javascript library
+sakitam init library-template-rollup project
+```
+
+### Development
+
+```bash
+git clone https://github.com/sakitam-fdd/sakitam-cli.git
+cd sakitam-cli
+npm link
+sakitam -h
+```
 
