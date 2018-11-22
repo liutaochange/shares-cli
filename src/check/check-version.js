@@ -8,12 +8,12 @@ module.exports = done => {
   // Ensure minimum supported node version is used
   if (!semver.satisfies(process.version, packageConfig.engines.node)) {
     return fatal(
-      '  You must upgrade node to >=' + packageConfig.engines.node + '.x to use sakitam-cli'
+      '  You must upgrade node to >=' + packageConfig.engines.node + '.x to use shares-cli'
     )
   }
 
   axios({
-    url: 'https://registry.npmjs.org/sakitam-cli',
+    url: 'https://registry.npmjs.org/shares-cli',
     method: 'get',
     timeout: 5000
   }).then((res) => {
@@ -21,11 +21,11 @@ module.exports = done => {
       const latestVersion = res.data['dist-tags'].latest;
       const localVersion = packageConfig.version;
       if (semver.lt(localVersion, latestVersion)) {
-        console.log(chalk.yellow('  A newer version of sakitam-cli is available.'));
+        console.log(chalk.yellow('  A newer version of shares-cli is available.'));
         console.log();
         console.log('  latest:    ' + chalk.green(latestVersion));
         console.log('  installed: ' + chalk.red(localVersion));
-        console.log('  update sakitam-cli latest: npm update -g sakitam-cli ');
+        console.log('  update shares-cli latest: npm update -g shares-cli ');
         console.log();
       }
       done();

@@ -20,9 +20,9 @@ program.on('--help', () => {
   log();
   log(chalk.white(`★ The default template has react vue`));
   log();
-  log('    $ sakitam list vue');
-  log('    $ sakitam list react');
-  log('    $ sakitam list -u aurorafe -p vue');
+  log('    $ shares list vue');
+  log('    $ shares list react');
+  log('    $ shares list -u aurorafe -p vue');
   log();
 });
 
@@ -75,7 +75,7 @@ spinner.start();
 axios({
   url: `https://api.github.com/users/${_user}/repos`,
   headers: {
-    'User-Agent': 'sakitam-cli'
+    'User-Agent': 'shares-cli'
   }
 }).then(res => {
   const requestBody = res.data;

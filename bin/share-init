@@ -37,13 +37,13 @@ program.on('--help', () => {
   logger.log('  Examples:');
   logger.log();
   logger.log(chalk.gray('    # create a new project with an official template'));
-  logger.log('    $ sakitam init webpack my-project');
+  logger.log('    $ shares init webpack my-project');
   logger.log();
   logger.log(chalk.gray('    # create a new project straight from a github template'));
-  logger.log('    $ sakitam init username/repo my-project');
+  logger.log('    $ shares init username/repo my-project');
   logger.log();
   logger.log(chalk.gray('    # create a new project straight from a git res'));
-  logger.log('    $ sakitam init my-project -o git@github.com:xx/xxxx.git');
+  logger.log('    $ shares init my-project -o git@github.com:xx/xxxx.git');
   logger.log();
 });
 
@@ -70,7 +70,7 @@ const name = inPlace ? path.relative('../', process.cwd()) : rawName;
 const to = path.resolve(rawName || '.');
 const _links = template.split('/');
 // eslint-disable-next-line
-const tmp = path.join(home, '.sakitam-templates', _links[_links.length - 1].replace(/^\.|(\.git)$/, ''));
+const tmp = path.join(home, '.shares-templates', _links[_links.length - 1].replace(/^\.|(\.git)$/, ''));
 if (program.offline) {
   console.log(`> Use cached template at ${chalk.yellow(tildify(tmp))}`);
   template = tmp
