@@ -13,7 +13,7 @@ module.exports = done => {
   }
 
   axios({
-    url: 'https://registry.npmjs.org/sakitam-cli',
+    url: 'https://registry.npmjs.org/shares-cli',
     method: 'get',
     timeout: 5000
   }).then((res) => {
