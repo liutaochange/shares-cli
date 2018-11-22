@@ -8,8 +8,8 @@
     "postinstall": "node src/helper/printf"
   },
   "bin": {
-    "share": "./bin/share",
-    "share-init": "./bin/share-init",
+    "shares": "./bin/share",
+    "shares-init": "./bin/share-init",
     "shares-list": "./bin/share-list"
   },
   "repository": {
